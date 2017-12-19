@@ -20,7 +20,7 @@ public class UserEntity {
     @Excel(title = "密码", index = 0)
     private String password;
 
-    @Excel(title = "年龄", index = 0)
+    @Excel(title = "年龄", index = 0, fieldType = int.class)
     private int age;
 
     @Excel(title = "UID", index = 0)
@@ -78,5 +78,8 @@ public class UserEntity {
         this.age = builder.age;
         this.uid = builder.uid;
         this.regDate = builder.regDate;
+    }
+
+    public UserEntity() {
     }
 }

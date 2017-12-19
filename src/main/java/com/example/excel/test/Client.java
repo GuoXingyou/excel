@@ -2,8 +2,11 @@ package com.example.excel.test;
 
 import com.example.excel.enums.OperationType;
 import com.example.excel.handle.ExportHandle;
+import com.example.excel.handle.ImportHandle;
 import com.google.common.collect.Lists;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +40,16 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            List<UserEntity> list2 =  new ImportHandle(new File("target/export.xlsx"),1)
+                    .getDataList(UserEntity.class);
+            System.out.println(list2.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }

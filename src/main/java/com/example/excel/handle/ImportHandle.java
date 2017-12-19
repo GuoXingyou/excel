@@ -323,16 +323,16 @@ public class ImportHandle {
                             } else {
                                 val = String.valueOf(val.toString());
                             }
-                        } else if (valType == Integer.class) {
+                        } else if (valType == Integer.class || valType == int.class) {
                             val = Double.valueOf(val.toString()).intValue();
-                        } else if (valType == Long.class) {
+                        } else if (valType == Long.class || valType == long.class) {
                             val = Double.valueOf(val.toString()).longValue();
-                        } else if (valType == Double.class) {
+                        } else if (valType == Double.class || valType == double.class) {
                             val = Double.valueOf(val.toString());
-                        } else if (valType == Float.class) {
+                        } else if (valType == Float.class || valType == float.class) {
                             val = Float.valueOf(val.toString());
                         } else if (valType == Date.class) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat sdf = new SimpleDateFormat(ef.dateFmt());
                             val = sdf.parse(val.toString());
                         } else {
                             if (ef.fieldType() != Class.class) {
