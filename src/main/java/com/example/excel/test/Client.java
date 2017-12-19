@@ -42,8 +42,7 @@ public class Client {
         }
 
         try {
-            List<UserEntity> list2 =  new ImportHandle(new File("target/export.xlsx"),1)
-                    .getDataList(UserEntity.class);
+            List<UserEntity> list2 =  new ImportHandle(new File("target/export.xlsx"),1).getDataList(UserEntity.class);
             System.out.println(list2.toString());
         } catch (Exception e) {
             e.printStackTrace();
