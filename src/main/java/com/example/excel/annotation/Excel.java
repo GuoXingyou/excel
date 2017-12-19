@@ -42,9 +42,9 @@ public @interface Excel {
     AlignType align() default AlignType.AUTO;
 
     /**
-     * 导出字段字段排序（升序）
+     * 时间字段格式
      */
-//    int sort() default 0;
+    String dateFmt() default "yyyy-MM-dd";
 
     /**
      * 如果是字典类型，请设置字典的type值

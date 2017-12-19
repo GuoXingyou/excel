@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -40,7 +42,7 @@ public class ExportHandle {
     /**
      * 工作表对象
      */
-    private Sheet sheet;
+    private SXSSFSheet sheet;
 
     /**
      * 样式列表
@@ -180,6 +182,7 @@ public class ExportHandle {
                 comment.setString(new XSSFRichTextString(ss[1]));
                 cell.setCellComment(comment);
             }else{
+                sheet.trackAllColumnsForAutoSizing();
                 cell.setCellValue(headerList.get(i));
             }
             sheet.autoSizeColumn(i);
@@ -274,8 +277,8 @@ public class ExportHandle {
      * @param val 添加值
      * @return 单元格对象
      */
-    public Cell addCell(Row row, int column, Object val){
-        return this.addCell(row, column, val, AlignType.AUTO, Class.class);
+    public Cell addCell(Row row, int column, Object val, Excel excel){
+        return this.addCell(row, column, val, Class.class, excel);
     }
 
     /**
@@ -283,12 +286,13 @@ public class ExportHandle {
      * @param row 添加的行
      * @param column 添加列号
      * @param val 添加值
-     * @param align 对齐方式（1：靠左；2：居中；3：靠右）
+//     * @param align 对齐方式（1：靠左；2：居中；3：靠右）
      * @return 单元格对象
      */
-    public Cell addCell(Row row, int column, Object val, AlignType align, Class<?> fieldType){
+    public Cell addCell(Row row, int column, Object val, Class<?> fieldType, Excel excel){
         Cell cell = row.createCell(column);
-        CellStyle style = styles.get("data"+(align.num() >= 1 && align.num() <= 3 ? align : ""));
+        CellStyle style = styles.get("data"+(excel.align().num() >= 1 && excel.align().num() <= 3
+                ? excel.align().num() : ""));
         try {
             if (val == null){
                 cell.setCellValue("");
@@ -303,9 +307,8 @@ public class ExportHandle {
             } else if (val instanceof Float) {
                 cell.setCellValue((Float) val);
             } else if (val instanceof Date) {
-                DataFormat format = wb.createDataFormat();
-                style.setDataFormat(format.getFormat("yyyy-MM-dd"));
-                cell.setCellValue((Date) val);
+                SimpleDateFormat sdf = new SimpleDateFormat(excel.dateFmt());
+                cell.setCellValue(sdf.format((Date) val));
             } else {
                 if (fieldType != Class.class){
                     cell.setCellValue((String)fieldType.getMethod("setValue", Object.class).invoke(null, val));
@@ -350,7 +353,7 @@ public class ExportHandle {
                     log.info(ex.toString());
                     val = "";
                 }
-                this.addCell(row, column++, val, excel.align(), excel.fieldType());
+                this.addCell(row, column++, val, Class.class, excel);
                 sb.append(val + ", ");
             }
             log.debug("Write success: ["+row.getRowNum()+"] "+sb.toString());
